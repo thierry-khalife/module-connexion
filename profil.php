@@ -1,0 +1,114 @@
+<?php session_start() ?>
+
+<!doctype html>
+
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>User Profil</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+
+        <nav class="nav">
+            <section class="undernav">
+                <a href="inscription.php"><img src="img/inscription.png"></a>
+                <a href="inscription.php">INSCRIPTION</a>
+            </section>
+            <section class="undernav">
+                <a href="connexion.php"><img src="img/connexion.png"></a>
+                <a href="connexion.php">CONNEXION</a>
+            </section>
+        </nav>
+        <article id="logo">
+            <a href="index.php"><img src="img/logo.png"></a>
+            <a href="index.php">TMG CNX</a>
+        </article>
+        <nav class="nav">
+            <section class="undernav">
+                <a href="admin.php"><img src="img/admin.png"></a>
+                <a href="admin.php">ADMIN PANEL</a>
+            </section>
+            <section class="undernav">
+                <a href="profil.php"><img src="img/profil.png"></a>
+                <a href="profil.php">USER PROFIL</a>
+            </section>
+        </nav>
+
+    </header>
+
+    <main>
+
+        <section class="leftsidebar">
+
+            <?php
+
+            if (isset($_SESSION['login'])) 
+            {
+                $connexion = mysqli_connect("localhost", "root", "", "moduleconnexion"); # Connexion à notre base de données.
+                $requete = "SELECT * FROM utilisateurs WHERE login='" . $_SESSION['login'] . "'"; # Préparation de la requête;
+                $query = mysqli_query($connexion, $requete); # Execution de la requête;
+                $resultat = mysqli_fetch_assoc($query); # Récupération des résultats de la requête;
+
+                ?>
+
+                <form class="form_profil" action="profil.php" method="post">
+
+                    <label> Login </label>
+                    <input type="text" name="login" value=<?php echo $resultat['login']; ?> />
+
+                    <label> Prénom </label>
+                    <input type="text" name="prenom" value=<?php echo $resultat['prenom']; ?> />
+
+                    <label> Nom </label>
+                    <input type="text" name="nom" value=<?php echo $resultat['nom']; ?> />
+
+                    <label> Password </label>
+                    <input type="password" name="password" value=<?php echo $resultat['password']; ?> />
+
+                    <input id="prodId" name="ID" type="hidden" value=<?php echo $resultat['id']; ?> />
+
+                    <input class="mybutton" type="submit" name="modifier" value="Modifier" />
+
+                </form>
+
+        </section>
+    <?php
+
+    } 
+    else 
+    {
+        echo "Veuillez vous connecter pour accéder à votre page !";
+    }
+
+    if (isset($_POST['modifier'])) 
+    {
+        $pwd = password_hash($_POST['password'], PASSWORD_BCRYPT, array('cost' => 12));
+        $update = "UPDATE utilisateurs SET login ='" . $_POST['login'] . "', prenom ='" . $_POST['prenom'] . "', nom ='" . $_POST['nom'] . "', password = '$pwd' WHERE id = '" . $resultat['id'] . "'";
+        $query2 = mysqli_query($connexion, $update); # Execution de la requête;
+        header('Location:profil.php');
+    }
+
+    ?>
+
+    </main>
+
+    <footer>
+        <nav class="navfooter">
+            <a href="inscription.php">INSCRIPTION</a>
+            <a href="connexion.php">CONNEXION</a>
+            <a href="admin.php">ADMIN PANEL</a>
+            <a href="profil.php">MEMBER PROFIL</a>
+        </nav>
+        <article>
+            <p>Copyright 2019 Coding School | All Rights Reserved | Project by Mathilde, Gwenael & Thierry.</p>
+        </article>
+    </footer>
+    
+</body>
+
+</html>
