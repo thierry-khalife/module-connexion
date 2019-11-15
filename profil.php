@@ -67,15 +67,20 @@
                     <label> Nom </label>
                     <input type="text" name="nom" value=<?php echo $resultat['nom']; ?> />
 
-                    <label> Password </label>
-                    <input type="password" name="password" value=<?php echo $resultat['password']; ?> />
+                   
 
                     <input id="prodId" name="ID" type="hidden" value=<?php echo $resultat['id']; ?> />
 
                     <input class="mybutton" type="submit" name="modifier" value="Modifier" />
 
                 </form>
-
+                <br>
+                    <form class="form_profil" action="profil.php" method="post">
+                    <label> Modify Password </label>
+                    <input type="password" name="passwordx" />
+                    <input id="prodId" name="ID" type="hidden" value=<?php echo $resultat['id']; ?> />
+                    <input class="mybutton" type="submit" name="modifier2" value="Modifier MDP" />
+                    </form>
         </section>
     <?php
 
@@ -87,12 +92,19 @@
 
     if (isset($_POST['modifier'])) 
     {
-        $pwd = password_hash($_POST['password'], PASSWORD_BCRYPT, array('cost' => 12));
-        $update = "UPDATE utilisateurs SET login ='" . $_POST['login'] . "', prenom ='" . $_POST['prenom'] . "', nom ='" . $_POST['nom'] . "', password = '$pwd' WHERE id = '" . $resultat['id'] . "'";
-        $query2 = mysqli_query($connexion, $update); # Execution de la requête;
+       
+        $update = "UPDATE utilisateurs SET login ='" . $_POST['login'] . "', prenom ='" . $_POST['prenom'] . "', nom ='" . $_POST['nom'] . "' WHERE id = '" . $resultat['id'] . "'";
+        $query3 = mysqli_query($connexion, $update); # Execution de la requête;
+        $_SESSION['login']=$_POST['login'];
         header('Location:profil.php');
     }
-
+    if(isset($_POST['passwordx'])){
+        $pwdx = password_hash($_POST['passwordx'], PASSWORD_BCRYPT, array('cost' => 12));
+        $updatepwd = "UPDATE utilisateurs SET password = '$pwdx' WHERE id = '" . $resultat['id'] . "'";
+        $query2 = mysqli_query($connexion, $updatepwd); # Execution de la requête;
+        header('Location:profil.php');
+    }
+        
     ?>
 
     </main>
